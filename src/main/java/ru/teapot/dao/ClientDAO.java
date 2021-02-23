@@ -3,18 +3,21 @@ package ru.teapot.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.teapot.models.Client;
 
+import javax.annotation.Resource;
 import java.util.List;
 
-@Component
+@Repository
+@Transactional
 public class ClientDAO {
 
     //private final JdbcTemplate jdbcTemplate;
     private SessionFactory sessionFactory;
     @Autowired
+    @Resource(name = "sessionFactory")
     public void setSessionFactory(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
     }

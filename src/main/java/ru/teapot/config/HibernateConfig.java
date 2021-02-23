@@ -1,6 +1,8 @@
 package ru.teapot.config;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,6 +14,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
@@ -19,6 +22,9 @@ import java.util.Properties;
 @EnableTransactionManagement
 @PropertySource(value = "classpath:db.properties")
 public class HibernateConfig {
+
+    private static Logger logger = LoggerFactory.getLogger(HibernateConfig.class);
+
     private Environment environment;
 
     @Autowired
@@ -53,16 +59,17 @@ public class HibernateConfig {
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactory() {
+    public LocalSessionFactoryBean sessionFactory() throws IOException {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
         sessionFactory.setPackagesToScan("ru.teapot.models");
         sessionFactory.setHibernateProperties(hibernateProperties());
+        sessionFactory.afterPropertiesSet();
         return sessionFactory;
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager() {
+    public HibernateTransactionManager transactionManager() throws IOException {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());
         return transactionManager;
